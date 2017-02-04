@@ -31,23 +31,3 @@ int main(int argc, char* argv[])
    }
    return(0); 
 }
-
-            //printf("argc[%d] = %s which is the name of the file \n ", count, argv[count]);   
-
-   //    //    scanf("%d", &run);  
-
-    // time_t seconds;
-   // 
-   //  //  seconds = time(NULL);
-   //       printf("Starting sleep at...%ld\n\n", seconds);
-   // seconds = sleep(1);
-   //     printf("Sleep time over at......%ld\n", seconds);
-    //getchar();
-      // long t;
-   //       time_t time;
-   // //       time(&t);
-   //    
-   //       printf("Starting sleep at %s", ctime(t));
-   //       seconds = sleep(1);
-   //       time(&t);
-   //       printf("Sleep time over at %s", ctime(t));
