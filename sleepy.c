@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
       return(1);
    }  
    
-   //register dignal and signal handler
+   //register signal and signal handler
    signal(SIGINT, sighandler);
    
    for(count=0;count<n;count++)
