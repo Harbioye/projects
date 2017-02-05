@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <ctype.h>
 #include <signal.h>
+#include <stdlib.h>
 
 void sighandler(int);
 
@@ -11,15 +12,16 @@ void sighandler(int);
 void sighandler(int signalInt)
 {
    //
-   printf("A signal is Caught because there was an interruption.. Maybe you hit the ctrl-c button  %d\n", signalInt);
+   printf("A signal is Caught because there was an interruption.. \n\tMaybe you hit the ctrl-c button. \n\t\tReturn value =  %d\n", signalInt);
    
    //terminate the program
-   exit(signalInt)
+   exit(0);
 }
 int main(int argc, char* argv[])
 {  
    int count;
    int n;
+   
    //isdigit works only on chars
    //atoi converts a string to an integer.
    if(argc>1 && isdigit(argv[1][0]))      
@@ -38,12 +40,19 @@ int main(int argc, char* argv[])
    for(count=0;count<n;count++)
    {      
       time_t t;
+      //keeps track of sleep start time.
       time(&t);
-      printf("Start sleep --> : %s",ctime(&t));
+      printf("\nStart sleep --> : %s",ctime(&t));
+      
+      //program sleeps for one second
       sleep(1);
+      
+      //keeps track sleep end time.
       time(&t);
-      printf("End sleep --> : %s\n", ctime(&t));   
-      printf("COUNT = %d,PID = %d\n",count, getpid());
+      printf("End sleep --> : %s", ctime(&t));   
+      
+      //In each loop print out the process ID and the loop count so that that particular process can be identified.
+      printf("PID = %d, COUNT = %d\n",getpid(),count);
    }
    return(0); 
 }
