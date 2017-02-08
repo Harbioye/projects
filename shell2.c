@@ -18,7 +18,9 @@ extern char **environ;
 
    //function definitions
 void clear();
-
+void directory();
+void environment();
+void quitprogram();
 
 /*clr -- clear the screen using the system function clear --> system("clear")
 */
@@ -27,7 +29,42 @@ void clear()
    system("clear");
 }
 
-   
+/*list the current directory contents (ls -al <directory>) - 
+   you will need to provide some command line parsing capability to extract the target directory for listing . 
+   Once you have built the replacement command line, use the system function to execute it
+*/
+void directory(char *myString)             
+{
+   char myStringCopy[100];
+         
+   strcpy(myStringCopy, "ls -al myString");      //copy from directory to copy
+   system(myStringCopy);                 //print out copy
+      
+         //return(0);
+}
+
+/*list all the environment strings -- 
+  environ is an array of pointers to the 
+  environment strings terminated with a NULL pointer in the while loop created.
+*/
+void environment(int n)
+{
+   char **environ;
+   n = 0;
+   while(environ[n]!= NULL) {
+      printf("%s\n", environ[n]);
+      n++;
+   }
+}
+
+/*quit from the program with a zero return value. 
+   Use the standard exit function.
+*/
+void quitprogram()
+{
+   exit(0);
+}
+ 
 int main()
 {
    //declare variables
@@ -38,12 +75,11 @@ int main()
    char delim[] = " "; 
    char* breakline;
    char *tokenline[4];
-   int n;
-   //char input[20];      
-   int i;
+   int n;     
    
-   //variable definition
+   int i;
    char **environ;
+   char myStringCopy[100];
    
    //actual initialization
    i = -1;
@@ -90,15 +126,15 @@ int main()
       }
       else if(strcmp(tokenline[1], aliases[1]) == 0)
       {  
-               
+         directory(myString);     
       }
       else if(strcmp(tokenline[2], aliases[2]) == 0)
       {
-      
+         environment(n);
       }
       else if(strcmp(tokenline[3], aliases[3]) == 0)
       {
-         exit(0);
+         quitprogram();
       }
       
       /* Use standard ANSI C system function to execute the line through the default system shell.
