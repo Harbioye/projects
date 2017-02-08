@@ -4,26 +4,40 @@
 #include <string.h>
 #include <unistd.h>
 
+//functions declaration
+
 /*The prototype for the fgets function is:
 */
 char *fgets (char *str, int size, FILE* file);
 
-/*The extern storage class is used to give a reference of a 
-global variable that is visible to ALL the program files.
-the variable cannot be initialized however, it points the 
-variable name at a storage location that has been previously defined.
-EXTERN is used to declare a global variable or function in another file.
+/*EXTERN is used to declare a global variable or function in another file.
 */   
 extern char **environ;
 
-int main(int argc, char* argv[])
+int main()
 {
    
    //declare variables
+   size_t line;
+   size_t maxLine = 100;
+   char *my_string;
+   
    char input[20];      
    int i;
+   
+   //variable definition
    char **environ;
    
+   /* These 2 lines are the heart of the program.
+   
+   Firstly, the char cast operator will be a character pointer and that 1 is added to maxLine for the malloc function i.e. 
+   the last character read by getline should be a null character and one is added to account for the last null character that will be read
+   */
+   my_string = (char *) malloc (maxLine + 1); 
+   
+   /*the value of line will be determined by the return of your getline function*/
+   line = getline (&my_string, &maxLine, stdin);   
+
    /*make a list of all aliases/internal controls -- declare and initailize array
      A string array is an array of characters and the use of const char tells 
      the compiler that there is no intention to change the data in aliases.
@@ -31,41 +45,16 @@ int main(int argc, char* argv[])
    
    //an array of strings
    const char *aliases[]= {"clr","dir","environ","quit"};
-   
-   //check for command lline arguments 
-   if(argc < 2)
-   {
-      printf("Enter a command line argument\n");
-      
-      /*Strings are useful for holding all types of long input. 
-      If you want the user to input his or her name, you must use a string. 
-      Using scanf() to input a string works, but it will terminate the string after it reads the first space, 
-      and moreover, because scanf doesn't know how big the array is, it can lead to "buffer overflows" 
-      when the user inputs a string that is longer than the size of the string (which acts as an input "buffer").
-      */
-      //fgets(input, 20, stdin);
-      
-      //while reading a string, scanf() stops reading as soon as it encounters a space
-      scanf("User input = %s/n",input);
-      printf( 
-   }
-   else
-   {
-      //fgets(input, 20, stdin);
-      scanf("User input = %s\n",input);
-   }
-    
-   //creat a loop
-   for(i =0;i < argc;++i)
+
+   /* create a while loop
+      if a character is not read by getline, then -1 will be returned
+   */  
+   while(line == -1)
    {      
-      /*clr -- clear the screen using the system function clear:    
-       system("clear")
-      */
-      if(strcmp(input, aliases[0]) == 0)
-      {
-         system("clear");
-      }
-         
+      printf("Enter a command line argument\n");
+   
+   
+               
       /*list the current directory contents (ls -al <directory>) - 
          you will need to provide some command line parsing capability to extract the target directory for listing . 
           Once you have built the replacement command line, use the system function to execute it
