@@ -5,26 +5,19 @@
 #include <unistd.h>
 
 //functions declaration
-
-/*The prototype for the fgets function is:
-*/
-char *fgets (char *str, int size, FILE* file);
-
-char *strtok(char *str, const char *delim);
-
 /*EXTERN is used to declare a global variable or function in another file.
 */   
 extern char **environ;
 
    //function definitions
-void clear();
-void directory();
-void environment();
-void quitprogram();
+void clear_clear();
+void list_directory();
+void list_environment(int n);
+void quit_program();
 
 /*clr -- clear the screen using the system function clear --> system("clear")
 */
-void clear()
+void clear_Screen()
 {
    system("clear");
 }
@@ -33,21 +26,20 @@ void clear()
    you will need to provide some command line parsing capability to extract the target directory for listing . 
    Once you have built the replacement command line, use the system function to execute it
 */
-void directory(char *myString)             
+void list_directory()             
 {
    char myStringCopy[100];
+   char *tokenline[100];
          
-   strcpy(myStringCopy, "ls -al myString");      //copy from directory to copy
+   strcpy(myStringCopy, "ls -al tokenline[1]");      //copy from directory to copy
    system(myStringCopy);                 //print out copy
-      
-         //return(0);
 }
 
 /*list all the environment strings -- 
   environ is an array of pointers to the 
   environment strings terminated with a NULL pointer in the while loop created.
 */
-void environment(int n)
+void list_environment(int n)
 {
    char **environ;
    n = 0;
@@ -60,7 +52,7 @@ void environment(int n)
 /*quit from the program with a zero return value. 
    Use the standard exit function.
 */
-void quitprogram()
+void quit_program()
 {
    exit(0);
 }
@@ -74,12 +66,12 @@ int main()
    
    char delim[] = " "; 
    char* breakline;
-   char *tokenline[4];
+   char *tokenline[maxLine];
    int n;     
    
    int i;
    char **environ;
-   char myStringCopy[100];
+   char myStringCopy[maxLine];
    
    //actual initialization
    i = -1;
@@ -122,19 +114,19 @@ int main()
       */
       if(strcmp(tokenline[0], aliases[0]) == 0)
       {
-         clear();
+         clear_Screen();
       }
       else if(strcmp(tokenline[1], aliases[1]) == 0)
       {  
-         directory(myString);     
+         list_directory();     
       }
       else if(strcmp(tokenline[2], aliases[2]) == 0)
       {
-         environment(n);
+         list_environment(n);
       }
       else if(strcmp(tokenline[3], aliases[3]) == 0)
       {
-         quitprogram();
+         quit_program();
       }
       
       /* Use standard ANSI C system function to execute the line through the default system shell.
