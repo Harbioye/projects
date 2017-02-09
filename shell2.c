@@ -43,7 +43,9 @@ void list_directory()
 void list_environment()
 {
    int n = 0;
-   while(environ[n]!= NULL) {
+   
+   while(environ[n]!= NULL)
+   {
       printf("%s\n", environ[n]);
       n++;
    }
@@ -62,10 +64,8 @@ void quit_program()
 int main()
 {
    //declare variables
-   size_t line;
    size_t maxLine = 100;
    char* myString;
-   
    char delim[] = " \n"; 
    char* breakline;
    char *tokenline[maxLine];
@@ -76,7 +76,7 @@ int main()
    n = 0;
 
  /*notice the prototype
-   arrays points at the respective functions
+   arrays are made to point at the respective void functions
   */
    void (*functionArray[4])() = {&clear_screen, &list_directory, &list_environment, &quit_program};
 
@@ -93,7 +93,8 @@ int main()
    while(1)
    {      
       printf("Enter a command line argument\n");
-      
+         
+      //read the operator input/line 
       getline (&myString, &maxLine, stdin);
             
       /*tokenize keyboard input/line using strtok using a for loop
@@ -108,9 +109,9 @@ int main()
       /*Next is the comparism of the arrays aliases and tokenline 
             by calling the functions above
        */
-         for(m = 0; m < sizeof(aliases); m++)    //loop through the array elements for comparison
+         for(m = 0; m < 4; m++)    //loop through the array elements for comparison
          {   
-            if(strcmp(tokenline[0], aliases[m]) == 0)
+            if(strcmp(tokenline[n], aliases[m]) == 0)
             {
                functionArray[m]();
             }           
@@ -119,7 +120,7 @@ int main()
             else
             {
                system(myString);
-            }
+            } 
          }         
          /* Deallocate allocated memory */
          free(tokenline[n]);   
