@@ -29,9 +29,12 @@ void clear_screen()
 */
 void list_directory()             
 {
+   // Note (David.Cooper@cheyney.edu): you declare myStringCopy here, but never initialize it...
    char myStringCopy[100];
+   // Note (David.Cooper@cheyney.edu): you declare tokenLine here, but never initialize it...
    char *tokenline[100];
-         
+   // Note (David.Cooper@cheyney.edu): I don't think this does what you want, you may want
+   // to look into how strcat works.
    strcpy(myStringCopy, "ls -al tokenline[1]");      //copy from directory to copy
    system(myStringCopy);                 //print out copy
 }
@@ -68,6 +71,7 @@ int main()
    char* myString;
    char delim[] = " \n"; 
    char* breakline;
+   // Note (David.Cooper@cheyney.edu): when do you need to use these tokens?
    char *tokenline[maxLine];
    int n;     
    int m;
@@ -100,8 +104,12 @@ int main()
       /*tokenize keyboard input/line using strtok using a for loop
          delimiter is a space -- hence every word to be printed ends when it comes across a space.
      */
+      // Note (David.Cooper@cheyney.edu): did you come up with this loop yourself? If not, please 
+      // cite your source.
       for(breakline = strtok(myString, " "); breakline != NULL; breakline = strtok(NULL, delim))
-      {                  
+      { 
+         // Note (David.Cooper@cheyney.edu): TO DEBUG try printing the value of n here:
+         
          tokenline[n] = malloc(strlen(breakline)+1);        //allocate some space for new array
          
          strcpy(tokenline[n],breakline);
