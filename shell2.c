@@ -15,8 +15,7 @@ Otherwise use the standard ANSI C system function to execute the line through th
 */   
 extern char **environ;
 
-
-//global variable depicting the number of functions 
+//global variables 
 const int NUM_FUNCS = 4;
 int n = 0;
 
@@ -28,9 +27,7 @@ void quit_program();
 
 //arrays are made to point at the respective void functions
 void (*functionArray[NUM_FUNCS])() = {&clear_screen, &list_directory, &list_environment, &quit_program};
-
 // -- ENDS --
-
 
 /*clr -- clear the screen using the system function clear --> system("clear")
 */
@@ -56,11 +53,9 @@ void list_directory(char **tokenline,int numTokens)
    {
       //get the second string from tokenline[] then concatenate
       strcat(direct, tokenline[1]);
-   }
-   
-   //call system on direct    
+   }   
+   //call system on direct array of characters  
    system(direct);                 
-
 }
 
 /*environment stores information about the terminal type, current locale, user’s home directory, name of curent file and more.
