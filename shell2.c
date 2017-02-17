@@ -183,6 +183,7 @@ int main()
       }       
       
       /* Deallocate each allocated memory used as extra storage for the tokenized strings
+         using a while loop to decrement n after each deallocattion until n = 0
       */
       while(n > 0)
       {
