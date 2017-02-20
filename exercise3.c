@@ -22,6 +22,7 @@ int n = 0;
 
 // -- FUNCTION PROTOTYPES --
 void clear_screen();
+// Note (Dr. Cooper): this should take two arguments like below
 void list_directory();
 void list_environment();
 void quit_program();
@@ -30,6 +31,7 @@ void quit_program();
 void (*functionArray[NUM_FUNCS])() = {&clear_screen, &list_directory, &list_environment, &quit_program};
 
 //Note: The chdir function does NOT change the PWD environment variable.
+// Note (Dr. Cooper): you do not need to declare chdir here, your include of unistd.h does it
 int chdir(const char * pathname);
 
 /*Determines the path name of the working directory and stores it in buffer.
@@ -38,6 +40,7 @@ int chdir(const char * pathname);
             buf must be big enough to hold the working directory name, 
             plus a terminating NULL to mark the end of the name.
 */
+// Note (Dr. Cooper): you do not need to declare getcwd here, your include of unistd.h does it
 char *getcwd(char *buf, size_t size);
 
 
@@ -150,15 +153,21 @@ int main(int argc , char *argv[])
       For this you will need to study the chdir (Glass p 431), getcwd and putenv functions.
    */
    //change current directory
+    // Note (Dr. Cooper): You shouldn't be calling chdir twice, just once in the if statement.
+   // instead of "newDirectory" you should use a char* (a.k.a a c-string) variable this could be
+   // a char array that you declare on the stack and give a value, but eventually it should be
+   // based on input from the user just like dir.
    chdir("newDirectory");
    
    if(chdir("newDirectory") == 0)
    {
+      // Note (Dr. Cooper): once you have the buffer, you should put it into the PWD environment variable.
       getcwd(buffer, maxLine);
       printf("the current working directory is %s \n", buffer);
    }
    else
    {
+     // Note (Dr. Cooper): You are returning here, so you never get to your prompt.
       return -1;
    }
    
@@ -222,6 +231,10 @@ int main(int argc , char *argv[])
       */
       if(!foundMatch)
       {
+	// Note (Dr. Cooper): myString has been overwritten by the tokenizer. You need to
+	// make a copy of it before you use the tokenizer, and call the version that is
+	// unmodified here. Whichever version of the string you use with the tokenizer will
+	// be modified, so don't use it here.
          system(myString);
       }       
       
