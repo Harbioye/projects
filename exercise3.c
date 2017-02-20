@@ -32,7 +32,11 @@ void quit_program();
 
 //arrays are made to point at the respective void functions
 void (*functionArray[NUM_FUNCS])() = {&clear_screen, &list_directory, &list_environment, &quit_program};
-
+// Note (Dr. Cooper): you have this function, but
+// your main doesn't ever use it.
+// You need to add it to your array of functions
+// and you need to add cd to your array of commands
+// also, I think you'll want to take at least one argument here
 void change_defaultDirectory();
 // -- ENDS --
 
@@ -113,7 +117,10 @@ void change_defaultDirectory()
    /*change current directory
       if successsful then return 0
       else return -1
-   */if(chdir(newDirectory) == 0)
+   */
+   // Note (Dr. Cooper): where is newDirectory defined? it should probably be
+   // passed in, based on command line input, and not global.
+   if(chdir(newDirectory) == 0)
    {
       getcwd(buffer, maxLine);
       printf("the current working directory is %s \n", buffer);
@@ -161,7 +168,7 @@ int main(int argc , char *argv[])
    /* create a while loop
    */  
    while(1)
-   {      
+   {
       // prompt for user input
       printf(">>");
          
@@ -209,7 +216,9 @@ int main(int argc , char *argv[])
             {
                functionArray[m](cpy_token,n);
             }
-            
+
+	    // Note (Dr. Cooper): you set foundMatch to 1 here.
+	    //                    when to you reset it to 0?
             //if compared elements are found, then foundmatch is reassigned as 1
             foundMatch = 1;
          }
