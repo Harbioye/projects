@@ -18,34 +18,25 @@ extern char **environ;
 
 //global variable 
 const int NUM_FUNCS = 4;
+size_t maxLine = 1000;
 int n = 0;
-
+char *buffer;
+char *newDirectory = "/myDirectory";
+char *cwd;
+   
 // -- FUNCTION PROTOTYPES --
 void clear_screen();
-// Note (Dr. Cooper): this should take two arguments like below
-void list_directory();
+void list_directory(char **tokenline,int numTokens);
 void list_environment();
 void quit_program();
 
 //arrays are made to point at the respective void functions
 void (*functionArray[NUM_FUNCS])() = {&clear_screen, &list_directory, &list_environment, &quit_program};
 
-//Note: The chdir function does NOT change the PWD environment variable.
-// Note (Dr. Cooper): you do not need to declare chdir here, your include of unistd.h does it
-int chdir(const char * pathname);
-
-/*Determines the path name of the working directory and stores it in buffer.
-      size -- The number of characters in the buffer area.
-      buf -- The name of the buffer used to hold the pathname of the working directory. 
-            buf must be big enough to hold the working directory name, 
-            plus a terminating NULL to mark the end of the name.
-*/
-// Note (Dr. Cooper): you do not need to declare getcwd here, your include of unistd.h does it
-char *getcwd(char *buf, size_t size);
-
-
+void change_defaultDirectory();
 // -- ENDS --
 
+// -- FUNCTION DECLARATIONS --
 
 /*clr -- clear the screen using the system function clear --> system("clear")
 */
@@ -104,29 +95,55 @@ void quit_program()
    exit(0);
 }
 
+/*Add the capability to change the current directory and set and change environment strings:
+
+      cd <directory>
+
+      Change the current default directory to <directory>. 
+      If the <directory> argument is not present, report the current directory. 
+      This command should also change the PWD environment string. 
+      For this you will need to study the chdir, getcwd and putenv functions.
+*/
+void change_defaultDirectory()
+{   
+   //get current directory
+   cwd = getcwd(buffer, maxLine);
+   printf("the current working directory = %s \n", cwd);
+   
+   /*change current directory
+      if successsful then return 0
+      else return -1
+   */if(chdir(newDirectory) == 0)
+   {
+      getcwd(buffer, maxLine);
+      printf("the current working directory is %s \n", buffer);
+   }
+   else
+   {
+      printf("Error %s \n", buffer);
+            //return -1;
+   }
+}
+// -- ENDS --
 
 //main function
 int main(int argc , char *argv[])
 {
    //declare variables
-   size_t maxLine = 1000;
-   
-   char* myString;                //used to store user input
+
+   char *myString;                //used to store user input
    
    char delim[] = " \n";         //delimiter is a space and next line -- hence every word to be printed ends when it comes across a space.
-
+   
+   char* line;
+   
    char* token;                  //a pointer used to store each tokenized string
 
    char *cpy_token[maxLine];     //copy each token into an array of maxLine character pointer for further use
 
    int m;
    
-   char buffer[maxLine];
-   
-   char *cwd;
-
-   const char *newDirectory = "/myDirectory";
-   
+      
     /*make a list of all aliases/internal controls -- declare and initailize array
      A string array is an array of characters and the use of const char tells 
      the compiler that there is no intention to change the data in aliases.
@@ -138,49 +155,22 @@ int main(int argc , char *argv[])
    
    //This is used to keep track of of the comparison between the tokenized user input and aliases array 
    int foundMatch = 0;      
-   
-   //get current directory
-   cwd = getcwd(buffer, maxLine);
-   printf("the current working directory = %s \n", cwd);
-   
-   /*Add the capability to change the current directory and set and change environment strings:
-
-      cd <directory>
-
-      Change the current default directory to <directory>. 
-      If the <directory> argument is not present, report the current directory. 
-      This command should also change the PWD environment string. 
-      For this you will need to study the chdir (Glass p 431), getcwd and putenv functions.
-   */
-   //change current directory
-    // Note (Dr. Cooper): You shouldn't be calling chdir twice, just once in the if statement.
-   // instead of "newDirectory" you should use a char* (a.k.a a c-string) variable this could be
-   // a char array that you declare on the stack and give a value, but eventually it should be
-   // based on input from the user just like dir.
-   chdir("newDirectory");
-   
-   if(chdir("newDirectory") == 0)
-   {
-      // Note (Dr. Cooper): once you have the buffer, you should put it into the PWD environment variable.
-      getcwd(buffer, maxLine);
-      printf("the current working directory is %s \n", buffer);
-   }
-   else
-   {
-     // Note (Dr. Cooper): You are returning here, so you never get to your prompt.
-      return -1;
-   }
-   
+    
+   //change_defaultDirectory();
+  
    /* create a while loop
    */  
    while(1)
    {      
-      //prompt for user input
+      // prompt for user input
       printf(">>");
          
       //read the operator input/line using stdin
-      getline (&myString, &maxLine, stdin);
-     
+      getline(&myString,&maxLine,stdin);
+      
+      // make a duplicate of myString before you use the tokenizer
+      line = strdup(myString);
+      
       /*tokenize keyboard input/line using strtok using a for loop
      */
       token = strtok(myString,delim);  
@@ -194,10 +184,10 @@ int main(int argc , char *argv[])
          
          //check inbetween each token to ensure that delimiters are assigned \0 and next string is considered if any
          token = strtok(NULL, delim);                
-
+      
          n++;
       }  
-
+   
       /*Next is the comparison of the arrays aliases and tokenline 
             loop through the array elements for comparison using a for loop
        */
@@ -231,11 +221,8 @@ int main(int argc , char *argv[])
       */
       if(!foundMatch)
       {
-	// Note (Dr. Cooper): myString has been overwritten by the tokenizer. You need to
-	// make a copy of it before you use the tokenizer, and call the version that is
-	// unmodified here. Whichever version of the string you use with the tokenizer will
-	// be modified, so don't use it here.
-         system(myString);
+         //call the duplicated and unmodified copy of myString.
+         system(line);
       }       
       
       /* Deallocate each allocated memory used as extra storage for the tokenized strings
