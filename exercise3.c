@@ -17,7 +17,7 @@ extern char **environ;
 
 
 //global variable 
-const int NUM_FUNCS = 4;
+const int NUM_FUNCS = 5;
 size_t maxLine = 1000;
 int n = 0;
 char *buffer;
@@ -29,18 +29,13 @@ void clear_screen();
 void list_directory(char **tokenline,int numTokens);
 void list_environment();
 void quit_program();
+void change_defaultDirectory();
 
 //arrays are made to point at the respective void functions
-void (*functionArray[NUM_FUNCS])() = {&clear_screen, &list_directory, &list_environment, &quit_program};
-// Note (Dr. Cooper): you have this function, but
-// your main doesn't ever use it.
-// You need to add it to your array of functions
-// and you need to add cd to your array of commands
-// also, I think you'll want to take at least one argument here
-void change_defaultDirectory();
+void (*functionArray[NUM_FUNCS])() = {&clear_screen, &list_directory, &list_environment, &quit_program, &change_defaultDirectory};
+
 // -- ENDS --
 
-// -- FUNCTION DECLARATIONS --
 
 /*clr -- clear the screen using the system function clear --> system("clear")
 */
@@ -118,8 +113,6 @@ void change_defaultDirectory()
       if successsful then return 0
       else return -1
    */
-   // Note (Dr. Cooper): where is newDirectory defined? it should probably be
-   // passed in, based on command line input, and not global.
    if(chdir(newDirectory) == 0)
    {
       getcwd(buffer, maxLine);
@@ -131,7 +124,6 @@ void change_defaultDirectory()
             //return -1;
    }
 }
-// -- ENDS --
 
 //main function
 int main(int argc , char *argv[])
@@ -155,10 +147,10 @@ int main(int argc , char *argv[])
      A string array is an array of characters and the use of const char tells 
      the compiler that there is no intention to change the data in aliases.
    */
-   const char *aliases[]= {"clr","dir","environ","quit"};
+   const char *aliases[]= {"clr","dir","environ","quit","cd"};
       
    //an array of integers used to determine when to call the array of void functions with or without arguments 
-   int needargs[] = {0,1,0,0};
+   int needargs[] = {0,1,0,0,0};
    
    //This is used to keep track of of the comparison between the tokenized user input and aliases array 
    int foundMatch = 0;      
@@ -168,7 +160,7 @@ int main(int argc , char *argv[])
    /* create a while loop
    */  
    while(1)
-   {
+   {      
       // prompt for user input
       printf(">>");
          
@@ -208,18 +200,19 @@ int main(int argc , char *argv[])
                if the needargs[] == 0, call functionArray without arguments 
                else call functioArray with arguments.
             */
-            if(needargs[m] == 0)
+            if(foundMatch == 0)
             {
-               functionArray[m]();
+               if(needargs[m] == 0)
+               {
+                  functionArray[m]();
+               }
+               else
+               {
+                  functionArray[m](cpy_token,n);
+               }
             }
-            else
-            {
-               functionArray[m](cpy_token,n);
-            }
-
-	    // Note (Dr. Cooper): you set foundMatch to 1 here.
-	    //                    when to you reset it to 0?
-            //if compared elements are found, then foundmatch is reassigned as 1
+            
+            //if compared elements are not found, then foundmatch is reassigned as 1
             foundMatch = 1;
          }
       }
@@ -243,8 +236,12 @@ int main(int argc , char *argv[])
          free(cpy_token[n]);   
       }
    }
+   
+   //reassign foundmatch to 0
+   foundMatch = 0;
+   
    //deallocate the entire array of cpy_token[] allocated to hold an extra copy of the tokenized word.
    free(cpy_token);
-        
+       
    return(0);
 }
