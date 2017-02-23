@@ -27,7 +27,7 @@ void clear_screen();
 void list_directory(char **tokenline,int numTokens);
 void list_environment();
 void quit_program();
-void change_defaultDirectory();
+void change_defaultDirectory(char **tokenline,int numTokens);
 
 //arrays are made to point at the respective void functions
 void (*functionArray[NUM_FUNCS])() = {&clear_screen, &list_directory, &list_environment, &quit_program, &change_defaultDirectory};
