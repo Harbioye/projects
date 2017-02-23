@@ -9,7 +9,8 @@ Otherwise use the standard ANSI C system function to execute the line through th
 #include <stdlib.h>
 #include <dirent.h>
 #include <string.h>
-#include <unistd.h>     
+#include <unistd.h>
+
 
 /*EXTERN is used to declare a global variable or function in another file.
 */   
@@ -19,10 +20,7 @@ extern char **environ;
 //global variable 
 const int NUM_FUNCS = 5;
 size_t maxLine = 1000;
-int n = 0;
 char *buffer;
-char *newDirectory = "/myDirectory";
-char *cwd;
    
 // -- FUNCTION PROTOTYPES --
 void clear_screen();
@@ -65,7 +63,6 @@ void list_directory(char **tokenline,int numTokens)
    
    //call system on direct    
    system(direct);                 
-
 }
 
 /*environment stores information about the terminal type, current locale, user’s home directory, name of curent file and more.
@@ -76,6 +73,8 @@ void list_directory(char **tokenline,int numTokens)
 */
 void list_environment()
 {
+   int n = 0;
+   
    while(environ[n]!= NULL)
    {
       printf("%s\n", environ[n]);
@@ -103,8 +102,13 @@ void quit_program()
       This command should also change the PWD environment string. 
       For this you will need to study the chdir, getcwd and putenv functions.
 */
-void change_defaultDirectory()
+void change_defaultDirectory(char **tokenline,int numTokens)
 {   
+   //local variable
+   char *cwd;
+   char *newDirectory = "/tokenline[1]";
+   char *pwd;
+   
    //get current directory
    cwd = getcwd(buffer, maxLine);
    printf("the current working directory = %s \n", cwd);
@@ -112,11 +116,46 @@ void change_defaultDirectory()
    /*change current directory
       if successsful then return 0
       else return -1
+      
+      new directory
    */
    if(chdir(newDirectory) == 0)
    {
       getcwd(buffer, maxLine);
       printf("the current working directory is %s \n", buffer);
+      
+      //make pwd const char *
+      //set pwd to buffer
+      pwd = buffer;
+      printf("pwd %s\n", pwd);
+      
+      //call setenv(takes three arguments)
+      //int setenv(const char *var_name, const char *new_value, int val);
+      
+      /*This is kept by the shell in order to switch back to your previous directory by running cd -.
+         
+         var_name is a pointer to a character string that contains 
+         the name of the environment variable to be added, changed, or deleted. 
+         
+         new_value is a pointer to a character string that contains 
+         the value of the environment variable named in var_name.
+         If new_value is a NULL pointer, it indicates that all occurrences 
+         of the environment variable named in var_name be deleted.
+         
+         If the environment variable named by var_name already exists and 
+         i)     the value of val is non-zero, the function shall return success and 
+                  the environment shall be updated. 
+         ii)    if the value of val is zero, the function shall return success and 
+                  the environment shall remain unchanged.
+
+
+      */
+         int ret_val;
+         ret_val = setenv("cwd","pwd",0);
+         
+         //debug
+         printf("ret_val = %d\n",ret_val);
+      
    }
    else
    {
@@ -124,6 +163,8 @@ void change_defaultDirectory()
             //return -1;
    }
 }
+
+// -- ENDS --
 
 //main function
 int main(int argc , char *argv[])
@@ -139,7 +180,9 @@ int main(int argc , char *argv[])
    char* token;                  //a pointer used to store each tokenized string
 
    char *cpy_token[maxLine];     //copy each token into an array of maxLine character pointer for further use
-
+   
+   int n = 0;
+   
    int m;
    
       
@@ -150,7 +193,7 @@ int main(int argc , char *argv[])
    const char *aliases[]= {"clr","dir","environ","quit","cd"};
       
    //an array of integers used to determine when to call the array of void functions with or without arguments 
-   int needargs[] = {0,1,0,0,0};
+   int needargs[] = {0,1,0,0,1};
    
    //This is used to keep track of of the comparison between the tokenized user input and aliases array 
    int foundMatch = 0;      
@@ -200,7 +243,7 @@ int main(int argc , char *argv[])
                if the needargs[] == 0, call functionArray without arguments 
                else call functioArray with arguments.
             */
-            if(foundMatch == 0)
+           if(foundMatch == 0)
             {
                if(needargs[m] == 0)
                {
