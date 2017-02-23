@@ -20,7 +20,6 @@ extern char **environ;
 //global variable 
 const int NUM_FUNCS = 5;
 size_t maxLine = 1000;
-char *buffer;
    
 // -- FUNCTION PROTOTYPES --
 void clear_screen();
@@ -104,14 +103,14 @@ void quit_program()
 */
 void change_defaultDirectory(char **tokenline,int numTokens)
 {   
-   //local variable
+   // //local variable
+   char *buffer;
    char *cwd;
-   char *newDirectory = "/tokenline[1]";
    char *pwd;
    
    //get current directory
    cwd = getcwd(buffer, maxLine);
-   printf("the current working directory = %s \n", cwd);
+   printf("the current working directory is %s\n", cwd);
    
    /*change current directory
       if successsful then return 0
@@ -119,48 +118,34 @@ void change_defaultDirectory(char **tokenline,int numTokens)
       
       new directory
    */
-   if(chdir(newDirectory) == 0)
-   {
-      getcwd(buffer, maxLine);
-      printf("the current working directory is %s \n", buffer);
-      
-      //make pwd const char *
-      //set pwd to buffer
-      pwd = buffer;
-      printf("pwd %s\n", pwd);
-      
-      //call setenv(takes three arguments)
-      //int setenv(const char *var_name, const char *new_value, int val);
-      
-      /*This is kept by the shell in order to switch back to your previous directory by running cd -.
-         
-         var_name is a pointer to a character string that contains 
-         the name of the environment variable to be added, changed, or deleted. 
-         
-         new_value is a pointer to a character string that contains 
-         the value of the environment variable named in var_name.
-         If new_value is a NULL pointer, it indicates that all occurrences 
-         of the environment variable named in var_name be deleted.
-         
-         If the environment variable named by var_name already exists and 
-         i)     the value of val is non-zero, the function shall return success and 
-                  the environment shall be updated. 
-         ii)    if the value of val is zero, the function shall return success and 
-                  the environment shall remain unchanged.
+   
+   //create an array of 500 characters 
+   char direct[500];
+   
+   //copy String ls -al into array direct
+   strcpy(direct, "cd");
+   printf("numtokens %d\n", numTokens);
 
-
-      */
-         int ret_val;
-         ret_val = setenv("cwd","pwd",0);
-         
-         //debug
-         printf("ret_val = %d\n",ret_val);
+   //check if number of token 
+   if(numTokens > 1)
+   {      
+      //get the second string from tokenline[] then concatenate
+      strcat(direct, " tokenline[1]");
       
-   }
-   else
-   {
-      printf("Error %s \n", buffer);
-            //return -1;
+      //call system on direct    
+      //system(direct);
+      if(chdir(direct) != 0)
+      {
+         perror("chdir() error()");
+      }
+      else {
+         if (getcwd(buffer, maxLine) == NULL)
+         {
+            perror("getcwd() error");
+         }
+         else
+            printf("changed current working directory to: %s\n", buffer);
+      }
    }
 }
 
@@ -197,9 +182,7 @@ int main(int argc , char *argv[])
    
    //This is used to keep track of of the comparison between the tokenized user input and aliases array 
    int foundMatch = 0;      
-    
-   //change_defaultDirectory();
-  
+      
    /* create a while loop
    */  
    while(1)
@@ -243,7 +226,7 @@ int main(int argc , char *argv[])
                if the needargs[] == 0, call functionArray without arguments 
                else call functioArray with arguments.
             */
-           if(foundMatch == 0)
+            if(foundMatch == 0)
             {
                if(needargs[m] == 0)
                {
@@ -278,11 +261,11 @@ int main(int argc , char *argv[])
          n--;
          free(cpy_token[n]);   
       }
-   }
    
    //reassign foundmatch to 0
-   foundMatch = 0;
-   
+      foundMatch = 0;
+   }
+
    //deallocate the entire array of cpy_token[] allocated to hold an extra copy of the tokenized word.
    free(cpy_token);
        
