@@ -49,19 +49,19 @@ void list_directory(char **tokenline,int numTokens)
 {
    //create an array of 500 characters 
    char direct[500];
-   
+      
    //copy String ls -al into array direct
    strcpy(direct, "ls -al ");
    
    //check if number of token 
-   if(numTokens > 1)
+  if(numTokens > 1)
    {
       //get the second string from tokenline[] then concatenate
       strcat(direct, tokenline[1]);
-   }
-   
-   //call system on direct    
-   system(direct);                 
+      
+      //call system on direct    
+      system(direct); 
+   }            
 }
 
 /*environment stores information about the terminal type, current locale, user’s home directory, name of curent file and more.
@@ -107,45 +107,38 @@ void change_defaultDirectory(char **tokenline,int numTokens)
    char *buffer;
    char *cwd;
    char *pwd;
-   
-   //get current directory
-   cwd = getcwd(buffer, maxLine);
-   printf("the current working directory is %s\n", cwd);
-   
-   /*change current directory
-      if successsful then return 0
-      else return -1
-      
-      new directory
-   */
-   
+
    //create an array of 500 characters 
    char direct[500];
    
    //copy String ls -al into array direct
-   strcpy(direct, "cd");
-   printf("numtokens %d\n", numTokens);
-
+   strcpy(direct, "/");
+        
+   //get current working directory
+   cwd = getcwd(buffer, maxLine);
+   printf("the current working directory is %s\n", cwd);
+   
    //check if number of token 
    if(numTokens > 1)
    {      
       //get the second string from tokenline[] then concatenate
-      strcat(direct, " tokenline[1]");
+      strcat(direct, "tokenline[1]");
       
-      //call system on direct    
-      //system(direct);
-      if(chdir(direct) != 0)
+      //call chdir on direct    
+      if(chdir(direct) == 0)
       {
-         perror("chdir() error()");
+         pwd = getcwd(buffer, maxLine);
+         printf("the current working directory PWD = %s \n", pwd);
+      
+         setenv("PWD",pwd,1);
+         
+         printf("changed current working directory to: %s\n", buffer);
       }
-      else {
-         if (getcwd(buffer, maxLine) == NULL)
-         {
-            perror("getcwd() error");
-         }
-         else
-            printf("changed current working directory to: %s\n", buffer);
-      }
+   }
+   else
+   {
+      //report the current directory.
+      system("ls -al");
    }
 }
 
@@ -262,7 +255,7 @@ int main(int argc , char *argv[])
          free(cpy_token[n]);   
       }
    
-   //reassign foundmatch to 0
+      //reassign foundmatch to 0
       foundMatch = 0;
    }
 
