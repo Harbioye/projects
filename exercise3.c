@@ -61,7 +61,13 @@ void list_directory(char **tokenline,int numTokens)
       
       //call system on direct    
       system(direct); 
-   }            
+   }
+   else
+   {
+   //call system on direct    
+      system(direct);
+   }
+               
 }
 
 /*environment stores information about the terminal type, current locale, user’s home directory, name of curent file and more.
@@ -104,7 +110,7 @@ void quit_program()
 void change_defaultDirectory(char **tokenline,int numTokens)
 {   
    // //local variable
-   char *buffer;
+   char buffer[maxLine];
    char *cwd;
 
    //check if number of token 
@@ -113,12 +119,9 @@ void change_defaultDirectory(char **tokenline,int numTokens)
       //call chdir on direct    
       if(chdir(tokenline[1]) == 0)
       {
-         cwd = getcwd(buffer, maxLine);
-         printf("the current working directory PWD = %s \n", cwd);
+         cwd = getcwd(buffer, maxLine-1);
       
          setenv("PWD",cwd,1);
-         
-         printf("changed current working directory to: %s\n", buffer);
       }
       //report the current directory
       else
@@ -194,7 +197,7 @@ int main(int argc , char *argv[])
       */
       while(token != NULL)
       {
-         //store each token in cpy_token[]
+         //create a duplicate of token in cpy_token[]
          cpy_token[n] = strdup(token);
          
          //check inbetween each token to ensure that delimiters are assigned \0 and next string is considered if any
@@ -227,7 +230,6 @@ int main(int argc , char *argv[])
                   functionArray[m](cpy_token,n);
                }
             }
-            
             //if compared elements are not found, then foundmatch is reassigned as 1
             foundMatch = 1;
          }
@@ -251,11 +253,9 @@ int main(int argc , char *argv[])
          n--;
          free(cpy_token[n]);   
       }
-   
       //reassign foundmatch to 0
       foundMatch = 0;
    }
-
    //deallocate the entire array of cpy_token[] allocated to hold an extra copy of the tokenized word.
    free(cpy_token);
        
