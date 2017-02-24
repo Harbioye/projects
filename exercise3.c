@@ -17,7 +17,7 @@ Otherwise use the standard ANSI C system function to execute the line through th
 extern char **environ;
 
 
-//global variable 
+//Global Variables 
 const int NUM_FUNCS = 5;
 size_t maxLine = 1000;
    
@@ -110,19 +110,20 @@ void quit_program()
 void change_defaultDirectory(char **tokenline,int numTokens)
 {   
    // //local variable
-   char buffer[maxLine];
+   char buffer[100];       //the buffer size has to be constant to be used in the getcwd() 
    char *cwd;
-   const char *path = tokenline[1];
    
    //check if number of token 
    if(numTokens > 1)
    {
       //call chdir on direct    
-      if(chdir(path) == 0)
+      if(chdir(tokenline[1]) == 0)
       {
-         cwd = getcwd(buffer, maxLine-1);
+         cwd = getcwd(buffer, 100);
+         printf("the current working directory PWD = %s \n", cwd);
       
          setenv("PWD",cwd,1);
+         printf("changed current working directory to: %s\n", buffer);
       }
       //report the current directory
       else
