@@ -17,7 +17,7 @@ extern char **environ;
 
 //global variables 
 const int NUM_FUNCS = 4;
-int n = 0;
+size_t maxLine = 1000;
 
 // -- FUNCTION PROTOTYPES --
 void clear_screen();
@@ -53,9 +53,10 @@ void list_directory(char **tokenline,int numTokens)
    {
       //get the second string from tokenline[] then concatenate
       strcat(direct, tokenline[1]);
-   }   
-   //call system on direct array of characters  
-   system(direct);                 
+   
+      //call system on direct array of characters  
+      system(direct);    
+   }
 }
 
 /*environment stores information about the terminal type, current locale, user’s home directory, name of curent file and more.
@@ -89,18 +90,20 @@ void quit_program()
 int main()
 {
    //declare variables
-   size_t maxLine = 100;
-   
-   char* myString;                //used to store user input
+
+   char *myString;                //used to store user input
    
    char delim[] = " \n";         //delimiter is a space and next line -- hence every word to be printed ends when it comes across a space.
-
+   
+   char* line;
+   
    char* token;                  //a pointer used to store each tokenized string
 
    char *cpy_token[maxLine];     //copy each token into an array of maxLine character pointer for further use
-
-   int m;
    
+   int n = 0;
+   
+   int m;
 
     /*make a list of all aliases/internal controls -- declare and initailize array
      A string array is an array of characters and the use of const char tells 
@@ -124,15 +127,18 @@ int main()
       //read the operator input/line using stdin
       getline (&myString, &maxLine, stdin);
      
+      // make a duplicate of myString before you use the tokenizer
+      line = strdup(myString);
+      
       /*tokenize keyboard input/line using strtok using a for loop
      */
-      token = strtok(myString,delim);  
+      token = strtok(myString,delim);    
      
       /*use a while loop if the above token is not empty
       */
       while(token != NULL)
       {
-         //store each token in cpy_token[]
+         //create a duplicate of token in cpy_token[]
          cpy_token[n] = strdup(token);
          
          //check inbetween each token to ensure that delimiters are assigned \0 and next string is considered if any
@@ -154,19 +160,22 @@ int main()
                if the needargs[] == 0, call functionArray without arguments 
                else call functionArray with arguments.
             */
-            if(needargs[m] == 0)
+            if(foundMatch == 0)
             {
-               functionArray[m]();
+               if(needargs[m] == 0)
+               {
+                  functionArray[m]();
+               }
+               else
+               {
+                  functionArray[m](cpy_token,n);
+               }
             }
-            else
-            {
-               functionArray[m](cpy_token,n);
-            }
-            
-            //if compared elements are found, then foundmatch is reassigned as 1
+            //if compared elements are not found, then foundmatch is reassigned as 1
             foundMatch = 1;
          }
       }
+
          
       /* where the first element in cpy_token[0] is not same as any of the elemnts in aliases array,
          call system function on the entire line of user input---------
@@ -174,7 +183,8 @@ int main()
       */
       if(!foundMatch)
       {
-         system(myString);
+         //call the duplicated and unmodified copy of myString.
+         system(line);      
       }       
       
       /* Deallocate each allocated memory used as extra storage for the tokenized strings
@@ -185,6 +195,9 @@ int main()
          n--;
          free(cpy_token[n]);   
       }
+     
+      //reassign foundmatch to 0
+      foundMatch = 0;
    }
    //deallocate the entire cpy_token array of maxLine character pointer allocated to hold an extra copy of the tokenized word.
    free(cpy_token);
