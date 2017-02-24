@@ -54,7 +54,7 @@ void list_directory(char **tokenline,int numTokens)
    strcpy(direct, "ls -al ");
    
    //check if number of token 
-  if(numTokens > 1)
+   if(numTokens > 1)
    {
       //get the second string from tokenline[] then concatenate
       strcat(direct, tokenline[1]);
@@ -106,35 +106,32 @@ void change_defaultDirectory(char **tokenline,int numTokens)
    // //local variable
    char *buffer;
    char *cwd;
-   char *pwd;
 
-   //create an array of 500 characters 
-   char direct[500];
-   
-   //copy String ls -al into array direct
-   strcpy(direct, "/");
-        
-   //get current working directory
-   cwd = getcwd(buffer, maxLine);
-   printf("the current working directory is %s\n", cwd);
-   
    //check if number of token 
    if(numTokens > 1)
-   {      
-      //get the second string from tokenline[] then concatenate
-      strcat(direct, "tokenline[1]");
-      
+   {
       //call chdir on direct    
-      if(chdir(direct) == 0)
+      if(chdir(tokenline[1]) == 0)
       {
-         pwd = getcwd(buffer, maxLine);
-         printf("the current working directory PWD = %s \n", pwd);
+         cwd = getcwd(buffer, maxLine);
+         printf("the current working directory PWD = %s \n", cwd);
       
-         setenv("PWD",pwd,1);
+         setenv("PWD",cwd,1);
          
          printf("changed current working directory to: %s\n", buffer);
       }
+      //report the current directory
+      else
+      {
+         perror("chdir(tokenline[1]) : ");
+        
+         printf("\n");
+                 
+         system("ls -al");
+      }
    }
+   
+   //if numTokens is 1 print out current working directory
    else
    {
       //report the current directory.
