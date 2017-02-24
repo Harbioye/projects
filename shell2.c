@@ -53,10 +53,9 @@ void list_directory(char **tokenline,int numTokens)
    {
       //get the second string from tokenline[] then concatenate
       strcat(direct, tokenline[1]);
-   
+   }
       //call system on direct array of characters  
       system(direct);    
-   }
 }
 
 /*environment stores information about the terminal type, current locale, user’s home directory, name of curent file and more.
