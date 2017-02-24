@@ -112,12 +112,13 @@ void change_defaultDirectory(char **tokenline,int numTokens)
    // //local variable
    char buffer[maxLine];
    char *cwd;
-
+   const char *path = tokenline[1];
+   
    //check if number of token 
    if(numTokens > 1)
    {
       //call chdir on direct    
-      if(chdir(tokenline[1]) == 0)
+      if(chdir(path) == 0)
       {
          cwd = getcwd(buffer, maxLine-1);
       
@@ -230,6 +231,7 @@ int main(int argc , char *argv[])
                   functionArray[m](cpy_token,n);
                }
             }
+            
             //if compared elements are not found, then foundmatch is reassigned as 1
             foundMatch = 1;
          }
@@ -253,9 +255,11 @@ int main(int argc , char *argv[])
          n--;
          free(cpy_token[n]);   
       }
+   
       //reassign foundmatch to 0
       foundMatch = 0;
    }
+
    //deallocate the entire array of cpy_token[] allocated to hold an extra copy of the tokenized word.
    free(cpy_token);
        
