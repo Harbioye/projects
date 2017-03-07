@@ -101,10 +101,10 @@ void forkSystem()
 void clear_screen()
 {
    
-   char *argv[3] = {" ", "clear", NULL};
+   char *argv[3] = {"clear"," ",NULL};
 
    //int execvp(const char *file, char *const argv[])
-   execvp("/bin/sh", argv);
+   execvp("clear", argv);
 }
 
 /* A directory is a storage for organized files with detailed information on both the object names and their attributes
@@ -128,7 +128,8 @@ void list_directory(char **tokenline,int numTokens)
 
       //call system or exec on direct    
       //system(direct);
-   execl("ls","-c","ls",tokenline[1]);            
+     //int execlp(const char *file, const char *arg0, ..., const char *argn, (char *)0);
+   execlp("ls","ls","-al",tokenline[1]);            
 }
 
 /*environment stores information about the terminal type, current locale, user’s home directory, name of curent file and more.
@@ -173,7 +174,6 @@ void change_defaultDirectory(char **tokenline,int numTokens)
    // //local variable
    char buffer[100];
    char *cwd;
-   
 
    //check if number of token 
    if(numTokens > 1)
@@ -190,12 +190,11 @@ void change_defaultDirectory(char **tokenline,int numTokens)
       //report the current directory
       else
       {
-         perror("chdir(tokenline[1]) \n");
-        
-                 
+         perror("Invalid Directory \n");
+                
          //system("ls -al");
          //int execlp(const char *file, const char *arg0, ..., const char *argn, (char *)0);
-         execl("/bin/sh","-c","cd",tokenline[1]);
+         execlp("ls","ls","-al",tokenline[1]);
       }
    }
    
@@ -203,8 +202,7 @@ void change_defaultDirectory(char **tokenline,int numTokens)
    else
    {
       //report the current directory.
-      //system("ls -al");
-      execl("/bin/sh","-c","cd",tokenline[1]);
+      execlp("ls","ls","-al",tokenline[1]);
    }
    
 }
@@ -306,30 +304,30 @@ int main(int argc , char *argv[])
                   functionArray[m](cpy_token,n);
                }
             }
-         }
-      }
-      
-      //if compared elements are not found, then foundmatch is reassigned as 1
-      foundMatch = 1; 
          
-      /* where the first element in cpy_token[0] is not same as any of the elemnts in aliases array,
+         
+         //if compared elements are not found, then foundmatch is reassigned as 1
+            foundMatch = 1; 
+         }
+      } 
+         /* where the first element in cpy_token[0] is not same as any of the elemnts in aliases array,
          call system function on the entire line of user input---------
          Use standard ANSI C system function to execute the line through the default system shell.
-      */
-      if(foundMatch == 1)
+         */
+      if(!foundMatch)
       {
-         //call the duplicated and unmodified copy of myString.
-         //execv("/bin/bash",line);
-         
-         // char *argv[3] = {"line", "", NULL};
-         //       
-         //          //int execvp(const char *file, char *const argv[])
-         //          execvp("/bin/sh", argv);
-         system(line);
+            //call the duplicated and unmodified copy of myString.
+            //execv("/bin/bash",line);
+            
+            // char *argv[3] = {"line", "", NULL};
+            //       
+            //          //int execvp(const char *file, char *const argv[])
+            //          execvp("/bin/sh", argv);
+         execlp("line","",NULL);
          printf("%s is not in the array \n", line);
-    
-      }       
-   
+            
+      }      
+        
       /* Deallocate each allocated memory used as extra storage for the tokenized strings
             using a while loop to decrement n after each deallocattion until n = 0
       */
