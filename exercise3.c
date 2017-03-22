@@ -1,6 +1,6 @@
 
 /*
-Write a small program that loops reading a line from standard input and checks the first word of the input line. 
+Write a shell program that loops reading a line from standard input and checks the first word of the input line. 
 If the first word is one of the following internal commands (or aliases) perform the designated task. 
 Otherwise use the standard ANSI C system function to execute the line through the default system shell.
 */
